@@ -1,0 +1,25 @@
+{
+  "name": "aurora",
+  "version": "1.0.0",
+  "description": "Nanoleaf Aurora NEEO Integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Nanoleaf",
+    "Aurora",
+    "Lights",
+    "Rhythm"
+  ],
+  "author": "Jim Haywood",
+  "license": "ISC",
+  "dependencies": {
+    "avahi": "0.0.1",
+    "mdns-js": "^1.0.1",
+    "nanoleaf-aurora-client": "^1.1.8",
+    "nanoleaves": "^1.2.0",
+    "neeo-sdk": "^0.48.13",
+    "request": "^2.83.0"
+  }
+}
