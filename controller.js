@@ -6,6 +6,7 @@ const controller = require('./controller.js');
 const AuroraApi = require('nanoleaf-aurora-client');
 const request = require('request');
 
+// edit the host and accessToken with your Aurora IP and API Token
 const api = new AuroraApi({
   host: '192.168.128.14',
   base: '/api/v1/',
