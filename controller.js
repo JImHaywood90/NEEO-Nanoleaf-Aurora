@@ -1,6 +1,6 @@
 'use strict';
 
-
+//Load all requirements
 const neeoapi = require('neeo-sdk');
 const controller = require('./controller.js');
 const AuroraApi = require('nanoleaf-aurora-client');
@@ -23,7 +23,7 @@ const COMPONENT_BRIGHTNESS = 'brightness';
 const COMPONENT_POWER = 'power';
 
 
-
+// raw api calls used for debugging
   api.turnOn()
   .then(function() {
     console.log('Success!');
@@ -73,6 +73,8 @@ const COMPONENT_POWER = 'power';
     console.error(err);
   });
 
+//actual functions 
+
 function setBrightness(deviceId, value) {
     var sourcerawsource = parseInt(value)
     console.log('Setting brightness to: ' + sourcerawsource);
@@ -105,6 +107,7 @@ function setBrightness(deviceId, value) {
     return api.getHue(deviceId);
   }
 
+//Brightness and Colour Slider Handlers
 module.exports.brightnessSliderCallback = {
     setter: setBrightness,
     getter: getBrightness,
@@ -114,7 +117,8 @@ module.exports.hueSliderCallback = {
     setter: setHue,
     getter: getHue,
   };
-  
+
+//Detect button press and then perform appropriate function 
 module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     console.log('[CONTROLLER]', name, 'button was pressed!');
   

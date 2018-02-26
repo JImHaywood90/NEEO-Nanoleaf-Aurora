@@ -1,5 +1,4 @@
 Very basic Nanoleaf Aurora plugin for NEEO
-
 Version 1.1
 
 Allows the following functions;
