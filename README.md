@@ -1,23 +1,18 @@
 Very basic Nanoleaf Aurora plugin for NEEO
-Version 1.1
+Version 2.0
 
 Allows the following functions;
-Powwer On
-Power Off
-Brightness
-Colour (the NEEO UI doesn't have a colour wheel? so it's a slider)
+Power On,
+Power Off,
+Brightness,
+Colour (the NEEO UI doesn't have a colour wheel? so it's a slider),
+More Colour! (Hue and Saturation now),
 
+Aurora IP and Token are now automatically generated upon initialisation, as soon as you run index.js you'll need to hold the power button on your Aurora until the lights flash.
 
+Your Aurora IP is detected using mdns looking for the _nanoleafapi.tcp broadcast - works for me but can;t guarantee it'll work for all.
 
- Host IP and API Token will need to edited manually in "controller.js" at the moment.
+The token is generated during device initialisation currently so jsut make sure the Aurora is ready if the token fails to generate.
 
-- Host IP Can be found dynamically by its mdns broadcast in terminal using the below command (requires avahi-utils);
-
-avahi-browse _nanoleafapi._tcp --resolve -t |grep address| cut -d "=" -f2 | tr -d '[]'
-
-Unfortunately, i've not worked out how to do this in nodejs yet
-
-- Api Token needs to be generated manually (I used nanoleaves npm module I think but I can't remember how)
-
-
+Unfortunately, in  its current state you'll need to pair the Aurora every time you start the addon  but it's a good start
 
