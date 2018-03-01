@@ -5,13 +5,8 @@
 const neeoapi = require('neeo-sdk');
 const controller = require('./controller.js');
 const request = require('request');
-// import the MDNS  module to find IP Address of Aurora (potentially)
-var mdns = require('mdns-js');
-
-
 
 //We Use the Nanoleaf-Aurora-CLient and Nanoleaves NPM modules to communicate with Aurora
-//Remember to edit host name and api token in controller.js as well as below :)
 const AuroraApi = require('nanoleaf-aurora-client');
 const NanoleavesApi = require('nanoleaves');
 const nanoleafHost = '192.168.128.14:16021';
@@ -48,11 +43,6 @@ const powerSwitch = {
   label: 'Power'
 };
 
-//this would be nice but not worked out how yet
-const discoveryInstructions = {
-  headerText: 'Discover devices',
-  description: 'NEEO will discover your Aurora now, press NEXT'
-};
 
 //Power toggle currently not working - don't know how to use api.getPowerStatus()
 const POWER_TOGGLE_BUTTON = { name: 'POWER_TOGGLE', label: 'Power Toggle' };
@@ -66,13 +56,14 @@ const aurora = neeoapi.buildDevice('Smart Light')
   .setType('LIGHT')
   .addButtonGroup('Power')
  //.addButton(POWER_TOGGLE_BUTTON)
-  .addButton(ALERT_BUTTON)
+  //.addButton(ALERT_BUTTON)
   .addButtonHandler(controller.onButtonPressed)
   .addSlider(HueSlider, controller.hueSliderCallback)
   .addSlider(SatSlider, controller.satSliderCallback)
   .addSlider(BriSlider, controller.brightnessSliderCallback)
   .registerInitialiseFunction(controller.initialise)
 ;
+
 
 console.log('- discover one NEEO Brain...');
 neeoapi.discoverOneBrain()
@@ -88,7 +79,7 @@ neeoapi.discoverOneBrain()
     });
   })
   .then(() => {
-    console.log('# READY! use the NEEO app to search for "Aurora".');
+    console.log('# We just need to find and Pair Aurora quickly...');
   })
   .catch((err) => {
     console.error('ERROR!', err);

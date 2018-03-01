@@ -21,6 +21,9 @@
     "nanoleaf-aurora-client": "^1.1.8",
     "nanoleaves": "^1.2.0",
     "neeo-sdk": "^0.48.13",
+    "net": "^1.0.2",
+    "node-localstorage": "^1.3.0",
+    "node-persist": "^2.1.0",
     "request": "^2.83.0"
   }
 }
