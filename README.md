@@ -14,5 +14,7 @@ Your Aurora IP is detected using mdns looking for the _nanoleafapi.tcp broadcast
 
 The token is generated during device initialisation currently so jsut make sure the Aurora is ready if the token fails to generate.
 
-Unfortunately, in  its current state you'll need to pair the Aurora every time you start the addon  but it's a good start
+Managed to implementlocalstorage to save generated API token and Aurora IP for reuse
+This Should mean Aurora only hastobepaired once - when initially running the plugin.
 
+IF API key is not generated correctly It will currently just loop until the Aurora is ready to pair (power button held down until lights start flashing) or it will loop forever.

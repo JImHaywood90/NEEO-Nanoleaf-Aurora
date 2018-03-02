@@ -215,8 +215,9 @@ function generateToken(arg) {
               //check for correct formatting rather than null eventually
               //nasty hack use the other variables to reconstruct the existing api var
               //the api var saved to local storage shows as undefined when retrieved
-              console.log(api);
+              //console.log(api);
 
+            
               api = new AuroraApi({
                host: rawIP,
                 base: '/api/v1/',
@@ -224,8 +225,20 @@ function generateToken(arg) {
                accessToken: rawToken
                });
 
-               //jsut cant get api to set correctlyeven when using json stringify
-               console.log(api);
+               api.identify()
+              .then(function() {
+                   console.log('Aurora flashing will flash to confirm success!!');
+               })
+               .catch(function(err) {
+                  console.log('the Aurora is not responding - maybe the IP or token is wrong')
+                  console.error(err);
+                  //if the identify fubnction fails then the api var is wrong.
+                  //attempt automatic repair
+                  findAuroraIP();
+               });
+
+               //All ready to go now - notify console!
+              
 
        console.log('# READY! use the NEEO app to search for "Aurora".');
        return;

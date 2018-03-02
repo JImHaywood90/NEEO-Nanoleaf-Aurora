@@ -11,7 +11,6 @@ const AuroraApi = require('nanoleaf-aurora-client');
 const NanoleavesApi = require('nanoleaves');
 const nanoleafHost = '192.168.128.14:16021';
 
-
 // Create a slider to adjust Aurora's brightnes
 const BriSlider = {
   name: 'brightness',
