@@ -1,0 +1,74 @@
+
+
+        effectBtn1 = {
+          name: "efectsBtn1",
+          label: auroraEfects[1]
+        };
+        effectBtn2 = {
+          name: "efectsBtn2",
+          label: auroraEfects[2]
+        };
+        effectBtn3 = {
+          name: "efectsBtn3",
+          label: auroraEfects[3]
+        };
+        effectBtn4 = {
+          name: "efectsBtn4",
+          label: auroraEfects[4]
+        };
+        effectBtn5 = {
+          name: "efectsBtn5",
+          label: auroraEfects[5]
+        };
+        effectBtn6 = {
+          name: "efectsBtn6",
+          label: auroraEfects[6]
+        };
+ 
+
+
+const effectsDevice = neeoapi.buildDevice('Aurora Effects')
+.setManufacturer('Nanotech')
+.addAdditionalSearchToken('Effects')
+.addAdditionalSearchToken('Aurora')
+.setType('LIGHT')
+.addButton(effectBtn6)
+.addButton(effectBtn5)
+.addButton(effectBtn4)
+.addButton(effectBtn3)
+.addButton(effectBtn2)
+.addButton(effectBtn1)
+.addButtonHandler(onButtonPressed)
+
+;
+
+
+
+console.log('- rdiscover NEEO Brain for new effects device...');
+neeoapi.discoverOneBrain()
+  .then((brain) => {
+    console.log('- Brain rediscovered:', brain.name);
+
+    console.log('- Start server');
+    return neeoapi.startServer({
+      brain,
+      port: 6336,
+      name: 'Aurora Effects',
+      devices: [effectsDevice]
+    });
+  })
+  .then(() => {
+    console.log('# We just need to find and Pair Aurora quickly...');
+  })
+  .catch((err) => {
+    console.error('ERROR!', err);
+    process.exit(1);
+  });
+
+  })
+  .catch(function(err) {
+    console.log('Unable to find any effects')
+    console.error(err);
+  });
+
+  

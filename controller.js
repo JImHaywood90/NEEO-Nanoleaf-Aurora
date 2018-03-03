@@ -2,11 +2,13 @@
 
 //Load all requirements
 const neeoapi = require('neeo-sdk');
-const controller = require('./controller.js');
+const index = require('./index.js');
 const AuroraApi = require('nanoleaf-aurora-client');
 const request = require('request');
 const NanoleavesApi = require('nanoleaves');
-let localStorage
+let localStorage;
+let auroraEffects, numberOfEffects;
+let auroraEffectsList, auroraEffectsLbs;
 
 // import the MDNS  module to find IP Address of Aurora (potentially)
 var mdns = require('mdns-js');
@@ -62,20 +64,14 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 //localStorage.removeItem('rawIP');
 //localStorage.removeItem('nanoleafHost');
 //localStorage.removeItem('rawToken');
-let rawAPI = localStorage.getItem('api'); 
-api = JSON.parse(rawAPI);
+api = localStorage.getItem('api'); 
 rawIP = localStorage.getItem('rawIP');
 nanoleafHost = localStorage.getItem('nanoleafHost');
 rawToken = localStorage.getItem('rawToken'); 
 console.log("rawIP: " +rawIP);
 console.log("Nanoleafhost: " +nanoleafHost);
 console.log("Token: " +rawToken);
-if (api != null) {
-  console.log("api var detected in local storage")
-  startAurora();
-  return;
-  //smash everything to pieces?
-}
+console.log("Api: " +api);
 if (rawIP == null) {
   console.log('No IP found. Starting detection.');
   findAuroraIP();
@@ -92,6 +88,18 @@ if (rawToken == null) {
   generateToken();
   return;
 };
+if (api == null) {
+  console.log("api var not detected in local storage, generating...")
+  startAurora();
+  return;
+  //smash everything to pieces?
+}
+if (api != null) {
+  console.log("api var detected in local storage")
+  startAurora();
+  return;
+  //smash everything to pieces?
+}
 }
 
 //First function called when initialised - searches for Aurora IP
@@ -184,65 +192,98 @@ function generateToken(arg) {
         generateToken();
       }
       else {
-      console.log("Generated new token..." + rawToken);
+      console.log("Hold that power button down!");
       }
   
   
       //makes sure that rawtoken exists otherwise tries discovery again;
       if (rawToken) {
-        api = new AuroraApi({
-          host: rawIP,
-          base: '/api/v1/',
-          port: '16021',
-          accessToken: rawToken
-         });
-         localStorage.setItem('rawToken', rawToken);
-         localStorage.setItem('api', JSON.stringify(api));
-         console.log('# READY! use the NEEO app to search for "Aurora".');
+       startAurora();
          return;
       }
       else {
        console.log("No token found, atempting device discovery again!");
           generateToken();
+          return;
       }
-      return api;
+      return;
     });
     }
 
 
   
     function startAurora(){
-              //check for correct formatting rather than null eventually
-              //nasty hack use the other variables to reconstruct the existing api var
-              //the api var saved to local storage shows as undefined when retrieved
-              //console.log(api);
+      //check for correct formatting rather than null eventually
+      //nasty hack use the other variables to reconstruct the existing api var
+      //the api var saved to local storage shows as undefined when retrieved
+      //console.log(api);
+      
+    
+      api = new AuroraApi({
+       host: rawIP,
+        base: '/api/v1/',
+       port: '16021',
+       accessToken: rawToken
+       });
+       //Save api to local storage
+       //Doesn't currently work as it's an object not string
+       //JSON stringify and parse doesnt work
+       let apiString = JSON.stringify(api);
+       localStorage.setItem('api', apiString);
+       
 
-            
-              api = new AuroraApi({
-               host: rawIP,
-                base: '/api/v1/',
-               port: '16021',
-               accessToken: rawToken
-               });
+       api.identify()
+      .then(function() {
+           console.log('Aurora flashing to confirm success!!');
+       })
+       .catch(function(err) {
+          console.log('the Aurora is not responding - it may still work. Otherwise restart.')
+          console.error(err);
+          //if the identify fubnction fails then the api var is wrong.
+          //It canalso fail if it's processing effects arrya but still work
+          //attempt automatic repair (rerun intial discovery function)
+          // findAuroraIP();
+          return;
+       });
 
-               api.identify()
-              .then(function() {
-                   console.log('Aurora flashing will flash to confirm success!!');
-               })
-               .catch(function(err) {
-                  console.log('the Aurora is not responding - maybe the IP or token is wrong')
-                  console.error(err);
-                  //if the identify fubnction fails then the api var is wrong.
-                  //attempt automatic repair
-                  findAuroraIP();
-               });
 
-               //All ready to go now - notify console!
-              
+//Now we've found Aurora and flashed to confirm pairing let's detect all the effects
+//Just got to work out a way to use them with the remote, buttons?
+api.listEffects()
+.then(function(effects) {
+  //Create Raw List of Effects
+  //This is a string atm and we need to trim the [" using substring
+auroraEffectsList = effects.substring(2);
+//console.log('Effects: ' + auroraEffectsList); 
+//Split raw list by comma, these values will have speech marks (so names with spaces work!)
+auroraEffectsLbs = auroraEffectsList.split(',');
+//Split by "," this way there are no speech marks. Used for button functions.
+auroraEffects = auroraEffectsList.split('","');
+console.log('the first effect will not work this has been detected as' + auroraEffects[0]);
+//saves the effect names so we can label the effect buttons appropriately on restart
+//This will loop through each effect and save to local storage!
+var index, len;
+numberOfEffects = auroraEffects.length;
+//save number of detected effects for use on restart
+localStorage.setItem('numberOfEffects', numberOfEffects)
+for (index = 0, len = numberOfEffects; index < len; ++index) {
+    console.log('Saving detected effect:' +auroraEffects[index]);
+    localStorage.setItem('auroraEffects'+index, auroraEffectsLbs[index]);
+  }
 
-       console.log('# READY! use the NEEO app to search for "Aurora".');
-       return;
-    }
+})
+.catch(function(err) {
+console.log('Unable to find any effects')
+console.error(err);
+return;
+});
+
+       //All ready to go now - notify console!
+      
+
+console.log('# READY! use the NEEO app to search for "Aurora".');
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,7 +300,6 @@ function generateToken(arg) {
     console.error(err);
   });
 }
-
 
 function getBrightness(deviceId) {
   return api.getBrightness(deviceId);
@@ -297,6 +337,17 @@ function getSat(deviceId) {
   return api.getSat(deviceId);
 }
 
+function setTestEffect(value) {
+console.log('setting test effect...' + value);
+api.setEffect(value)
+  .then(function() {
+    console.log('Success! Set Aurora to' +value);
+  })
+  .catch(function(err) {
+    console.error(err);
+  });
+}
+
 
 //Brightness and Colour Slider Handlers
 module.exports.brightnessSliderCallback = {
@@ -317,6 +368,21 @@ module.exports.satSliderCallback = {
 //Detect button press and then perform appropriate function 
 module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     console.log('[CONTROLLER]', name, 'button was pressed!');
+    let index, len
+    for (index = 0, len = numberOfEffects; index < len; ++index) {
+      //eventually worked this one out!
+      //indexof and includes was sending 1,0 and 10 for 10,  2,3 and 23 for  23
+      //the below regex resolves the problem with temp vars txt and numb
+      var txt = name;
+      var numb = txt.match(/\d/g);
+      numb = numb.join("");
+      if (numb == index){
+          // debugging console.log('LOOPING DETECT');
+          //console.log("Send button " +index +" to Aurora");
+          setTestEffect(auroraEffects[index]);
+      }
+      
+    }
   
     if (name === "POWER_TOGGLE") {
       console.log("finding device power status");
@@ -333,6 +399,6 @@ module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     }
     if (name === "ALERT") {
       console.log("Is it your first time?");
-      firstTime();
+      setTestEffect();
   }
   };
