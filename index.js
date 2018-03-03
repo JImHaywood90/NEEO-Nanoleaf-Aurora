@@ -79,13 +79,13 @@ for (index = 0, len = numberOfEffects; index < len; ++index) {
     let effectbuttonnamelbl = '"'+effectbuttonname+'"';
     let effectnametemp = localStorage.getItem(storageEffectsNumber);
     let effectname = effectnametemp.replace(/^"(.*)"$/, '$1');
-    console.log('creating button element for ' +effectbuttonname);
+   // console.log('creating button element for ' +effectbuttonname);
     //console.log(effectname +effectnametemp +effectbuttonname + effectbuttonnamelbl);
     effectBtn[index] = {
       name: effectbuttonnamelbl,
       label: effectlabel
     };
-    console.log(effectBtn[3]);
+   // console.log(effectBtn[3]);
     }
 
 

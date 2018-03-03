@@ -185,6 +185,7 @@ function generateToken(arg) {
      // console.log("what  does this say?" + generatedApiToken);
       var temp = generatedApiToken.split('"');
       rawToken = temp[3];
+      localStorage.setItem('rawToken', rawToken);
      }
   
       if (rawToken == 'undefined') { 
@@ -368,10 +369,12 @@ module.exports.satSliderCallback = {
 //Detect button press and then perform appropriate function 
 module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     console.log('[CONTROLLER]', name, 'button was pressed!');
+    //use for loop to set events for all the dynamic effect buttons
+    //rather than writing 40+ individual if statements!
     let index, len
     for (index = 0, len = numberOfEffects; index < len; ++index) {
       //eventually worked this one out!
-      //indexof and includes was sending 1,0 and 10 for 10,  2,3 and 23 for  23
+      //indexof and includes were sending 1,0 and 10 for 10,  2,3 and 23 for  23
       //the below regex resolves the problem with temp vars txt and numb
       var txt = name;
       var numb = txt.match(/\d/g);
