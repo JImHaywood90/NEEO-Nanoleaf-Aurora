@@ -232,29 +232,13 @@ function generateToken(arg) {
        let apiString = JSON.stringify(api);
        localStorage.setItem('api', apiString);
        
-
-       api.identify()
-      .then(function() {
-           console.log('Aurora flashing to confirm success!!');
-       })
-       .catch(function(err) {
-          console.log('the Aurora is not responding - it may still work. Otherwise restart.')
-          console.error(err);
-          //if the identify fubnction fails then the api var is wrong.
-          //It canalso fail if it's processing effects arrya but still work
-          //attempt automatic repair (rerun intial discovery function)
-          // findAuroraIP();
-          return;
-       });
-
-
 //Now we've found Aurora and flashed to confirm pairing let's detect all the effects
 //Just got to work out a way to use them with the remote, buttons?
 api.listEffects()
 .then(function(effects) {
   //Create Raw List of Effects
   //This is a string atm and we need to trim the [" using substring
-auroraEffectsList = effects.substring(2);
+auroraEffectsList = effects.slice(2,-2);
 //console.log('Effects: ' + auroraEffectsList); 
 //Split raw list by comma, these values will have speech marks (so names with spaces work!)
 auroraEffectsLbs = auroraEffectsList.split(',');
@@ -280,9 +264,23 @@ return;
 });
 
        //All ready to go now - notify console!
-      
 
-console.log('# READY! use the NEEO app to search for "Aurora".');
+       api.identify()
+       .then(function() {
+            console.log('Aurora flashing to confirm success!!');
+            console.log('# READY! use the NEEO app to search for "Aurora".');
+        })
+        .catch(function(err) {
+           console.log('the Aurora is not responding - it may still work. Otherwise restart.')
+           console.error(err);
+           //if the identify fubnction fails then the api var is wrong.
+           //It canalso fail if it's processing effects arrya but still work
+           //attempt automatic repair (rerun intial discovery function)
+           // findAuroraIP();
+           console.log('# READY! use the NEEO app to search for "Aurora".');
+           return;
+        }); 
+
 
 }
 
@@ -371,22 +369,6 @@ module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     console.log('[CONTROLLER]', name, 'button was pressed!');
     //use for loop to set events for all the dynamic effect buttons
     //rather than writing 40+ individual if statements!
-    let index, len
-    for (index = 0, len = numberOfEffects; index < len; ++index) {
-      //eventually worked this one out!
-      //indexof and includes were sending 1,0 and 10 for 10,  2,3 and 23 for  23
-      //the below regex resolves the problem with temp vars txt and numb
-      var txt = name;
-      var numb = txt.match(/\d/g);
-      numb = numb.join("");
-      if (numb == index){
-          // debugging console.log('LOOPING DETECT');
-          //console.log("Send button " +index +" to Aurora");
-          setTestEffect(auroraEffects[index]);
-      }
-      
-    }
-  
     if (name === "POWER_TOGGLE") {
       console.log("finding device power status");
       console.log('no idea how to query device status - true/false is logged to console corrctly but thats it')
@@ -395,13 +377,32 @@ module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     if (name === "POWER OFF") {
       console.log("Send Power Off to Aurora");
       api.turnOff();
+      return;
     }
     if (name === "POWER ON") {
         console.log("Send Power On to Aurora");
         api.turnOn();
+        return;
     }
     if (name === "ALERT") {
       console.log("Is it your first time?");
       setTestEffect();
+      return;
   }
+    let index, len
+    for (index = 0, len = numberOfEffects; index < len; ++index) {
+      //eventually worked this one out!
+      //indexof and includes were sending 1,0 and 10 for 10,  2,3 and 23 for  23
+      //the below regex resolves the problem with temp vars txt and numb
+      var txt = name;
+      //Regex strip all numbers from name and join together in order
+      //Use the number against the index to match button to effect
+      var numb = txt.match(/\d/g);
+      numb = numb.join("");
+      if (numb == index){
+          // debugging console.log('LOOPING DETECT');
+          //console.log("Send button " +index +" to Aurora");
+          setTestEffect(auroraEffects[index]);
+      }
+    }
   };

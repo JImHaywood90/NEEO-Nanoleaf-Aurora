@@ -55,6 +55,7 @@ let effectBtn1, effectBtn2, effectBtn3, effectBtn4, effectBtn5, effectBtn6, effe
 let effectBtn8,effectBtn9,effectBtn10,effectBtn11,effectBtn12,effectBtn13,effectBtn14,effectBtn15,effectBtn16,effectBtn17,effectBtn18;
 let effectBtn19,effectBtn20,effectBtn21,effectBtn22,effectBtn23,effectBtn24,effectBtn25
 var effectBtn = {}; // object
+var effectsDevice = {};
 
 if (typeof localStorage === "undefined" || localStorage === null) {
   let LocalStorage = require('node-localstorage').LocalStorage;
@@ -88,24 +89,23 @@ for (index = 0, len = numberOfEffects; index < len; ++index) {
    // console.log(effectBtn[3]);
     }
 
-
 }
   else {
     //This should only run before we pair with Aurora, the effects device will fail without
     //generating fake buttons.Once connected to Aurora the lables and buttons will be updated
     //JUst restart this driveronce it lists the detected effects to console
 
-    console.log('effects not already detected... making dummy buttons!')
+    console.log('effects not already detected... making temporary dummy buttons!')
     var index, len, auroraEffects;
   
-    for (index = 0, len = 24; index < len; ++index) {
+    for (index = 0, len = 1; index < len; ++index) {
       let label = "Dummy"+index;
       let name = "DummyName"+index;
       effectBtn[index] = {
         name: name,
         label: label
       };
-   console.log(label);
+  // console.log(label);
   }
 }
 
@@ -157,7 +157,7 @@ const aurora = neeoapi.buildDevice('Smart Light')
   .setType('LIGHT')
   .addButtonGroup('Power')
  //.addButton(POWER_TOGGLE_BUTTON)
- // .addButton(ALERT_BUTTON)
+   //.addButton(ALERT_BUTTON)
   .addButtonHandler(controller.onButtonPressed)
   .addSlider(HueSlider, controller.hueSliderCallback)
   .addSlider(SatSlider, controller.satSliderCallback)
@@ -165,38 +165,28 @@ const aurora = neeoapi.buildDevice('Smart Light')
   .registerInitialiseFunction(controller.initialise)
 ;
 
-//Currently just 6 effects are supported
+//Now supports as many effects as you can throw at it
 
-const effectsDevice = neeoapi.buildDevice('Aurora Effects')
+effectsDevice = neeoapi.buildDevice('Aurora Effects')
   .setManufacturer('Nanotech')
   .addAdditionalSearchToken('Effects')
   .addAdditionalSearchToken('Aurora')
   .setType('LIGHT')
-  //There's surely a better way to add all these buttons
-  .addButton(effectBtn[1])
-  .addButton(effectBtn[2])
-  .addButton(effectBtn[3])
-  .addButton(effectBtn[4])
-  .addButton(effectBtn[5])
-  .addButton(effectBtn[6])
-  .addButton(effectBtn[7])
-  .addButton(effectBtn[8])
-  .addButton(effectBtn[9])
-  .addButton(effectBtn[10])
-  .addButton(effectBtn[11])
-  .addButton(effectBtn[12])
-  .addButton(effectBtn[13])
-  .addButton(effectBtn[14])
-  .addButton(effectBtn[15])
-  .addButton(effectBtn[16])
-  .addButton(effectBtn[17])
-  .addButton(effectBtn[18])
-  .addButton(effectBtn[19])
-  .addButton(effectBtn[20])
-  .addButton(effectBtn[21])
-  .addButton(effectBtn[22])
+  .addButton(ALERT_BUTTON)
+  //we add the effect buttons in the below loop
+  //this way it doesn't matter how many effects are detected
   .addButtonHandler(controller.onButtonPressed)
 ;
+
+//this might just work! we now only add the effects if there are any to add!
+//number of effects is the last effect var saved to storage so if it exists
+//start building the device and inject appropriate amount of custom buttons.
+if (numberOfEffects) {
+var index, len, auroraEffects;
+for (index = 0, len = numberOfEffects; index < len; ++index) {
+effectsDevice.addButton(effectBtn[index]);
+}
+}
 
 console.log('- discover one NEEO Brain...');
 neeoapi.discoverOneBrain()
