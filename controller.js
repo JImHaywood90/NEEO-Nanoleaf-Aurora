@@ -111,13 +111,13 @@ var browser = mdns.createBrowser(mdns.tcp("nanoleafapi"));
 
 //starts discovering
 browser.on('ready', function onReady() {
-  console.log('browser is ready');
+  console.log('Nanoleaf MDNS browser is ready');
   browser.discover();
 });
 
 //saves the extracted IP address once found
 browser.on('update', function onUpdate(data) {
-  console.log('data:', data);
+ // console.log('data:', data);
   var steve = data.addresses;
   var alan = steve[0];
   //saves the detected rawIP for future useage
@@ -237,14 +237,13 @@ function generateToken(arg) {
 api.listEffects()
 .then(function(effects) {
   //Create Raw List of Effects
-  //This is a string atm and we need to trim the [" using substring
+  //This is a string atm and we need to trim the first 2 and last 2 characters using slice
 auroraEffectsList = effects.slice(2,-2);
 //console.log('Effects: ' + auroraEffectsList); 
 //Split raw list by comma, these values will have speech marks (so names with spaces work!)
 auroraEffectsLbs = auroraEffectsList.split(',');
 //Split by "," this way there are no speech marks. Used for button functions.
 auroraEffects = auroraEffectsList.split('","');
-console.log('the first effect will not work this has been detected as' + auroraEffects[0]);
 //saves the effect names so we can label the effect buttons appropriately on restart
 //This will loop through each effect and save to local storage!
 var index, len;
@@ -268,7 +267,7 @@ return;
        api.identify()
        .then(function() {
             console.log('Aurora flashing to confirm success!!');
-            console.log('# READY! use the NEEO app to search for "Aurora".');
+            console.log('# READY! use the NEEO app to search for "Aurora" and "effects".');
         })
         .catch(function(err) {
            console.log('the Aurora is not responding - it may still work. Otherwise restart.')
@@ -277,7 +276,7 @@ return;
            //It canalso fail if it's processing effects arrya but still work
            //attempt automatic repair (rerun intial discovery function)
            // findAuroraIP();
-           console.log('# READY! use the NEEO app to search for "Aurora".');
+           //
            return;
         }); 
 
@@ -337,10 +336,10 @@ function getSat(deviceId) {
 }
 
 function setTestEffect(value) {
-console.log('setting test effect...' + value);
+console.log('setting effect...' + value);
 api.setEffect(value)
   .then(function() {
-    console.log('Success! Set Aurora to' +value);
+    console.log('Success! Set Aurora to ' +value);
   })
   .catch(function(err) {
     console.error(err);
@@ -369,6 +368,7 @@ module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
     console.log('[CONTROLLER]', name, 'button was pressed!');
     //use for loop to set events for all the dynamic effect buttons
     //rather than writing 40+ individual if statements!
+    //Power functions must be first for the buttons loop to work correctly
     if (name === "POWER_TOGGLE") {
       console.log("finding device power status");
       console.log('no idea how to query device status - true/false is logged to console corrctly but thats it')
@@ -384,11 +384,6 @@ module.exports.onButtonPressed = function onButtonPressed(name,deviceid) {
         api.turnOn();
         return;
     }
-    if (name === "ALERT") {
-      console.log("Is it your first time?");
-      setTestEffect();
-      return;
-  }
     let index, len
     for (index = 0, len = numberOfEffects; index < len; ++index) {
       //eventually worked this one out!

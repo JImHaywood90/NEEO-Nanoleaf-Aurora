@@ -1,62 +1,21 @@
 'use strict';
-
-// Nanoleaf Aurora Support for NEEO - With Effects, Brightness and Colour
-//
-// Information //
-//
-// There should be no need to update any values manually!
-//
-// This Driver creates two Devices
-// 1. Nanoleaf Smart Light
-// 2. Nanoleaf Aurora Effects
-//
-// Instructions //
-//
-// Simply run the driver, when prompted hold the power button down on the Aurora to pair
-// You'll know it's paired when the Aurora flashes. When this happens, restart the driver!
-// Restarting will update the effect labels on the device - they were detected during intialisation
-// 
-// You can use the Nanoleaf Smart Device without restarting...
-// Although Aurora Effects device may work but the names of the effects will not match your Aurora!
-// 
-//                 
-// Troubleshooting //
-//               
-//  - Have you tried switching it off and on again?! ;)
-//  
-//  - If you have added the Aurora Effects Device and the labels start with #..
-//    restart the driver. 
-//    The real effect labels are generated upon device initialisation
-//    They are then saved to Storage to prevent constant discovery along with the
-//    API token and Aurora IP address,until they are retrieved they use fedault valuse
-//    such as "Fireflies"
-//
-//  - If the automated device discovery fails for any reason and it just keeps looping
-//    the values can be overwritten manually if detected incorrectly by editing...
-//    ./scratch {variablename} 
-//  
-//  - Hopefully any other issues will be easily resolved by checking the values contained in
-//    the files within ./scratch - these are effectively all the custom variables that 
-//    are generatd by mdns etc.
-//
-//  - If there are no files in ./scratch try copying the dummy files from the ./scratch/examples
-//    folder. Edit the files with your IP and API key as per the example files.
-//
-/////////////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////////
+//                                                                        //
+// Nanoleaf Aurora Support for NEEO - With Effects, Brightness and Colour //
+//                         by Jim Haywood                                 //
+//                                                                        //
+////////////////////////////////////////////////////////////////////////////
 
 const neeoapi = require('neeo-sdk');
 const controller = require('./controller.js');
 const request = require('request');
 //all these vars relate to the Aurora effects device
 let localStorage, numberOfEffects, effectbuttonname, effectbuttonnamelabel,storageEffectsNumber;
-let effectname, effectnamelabel, effect6, effect5, effect4, effect3, effect2, effect1;
-let effectBtn1, effectBtn2, effectBtn3, effectBtn4, effectBtn5, effectBtn6, effectBtn7;
-let effectBtn8,effectBtn9,effectBtn10,effectBtn11,effectBtn12,effectBtn13,effectBtn14,effectBtn15,effectBtn16,effectBtn17,effectBtn18;
-let effectBtn19,effectBtn20,effectBtn21,effectBtn22,effectBtn23,effectBtn24,effectBtn25
+let effectname, effectnamelabel;
 var effectBtn = {}; // object
-var effectsDevice = {};
+var effectsDevice = {}; // object
 
+//Build up a lsit of all available effects (if aleady detected and inject into custom driver "effets")
 if (typeof localStorage === "undefined" || localStorage === null) {
   let LocalStorage = require('node-localstorage').LocalStorage;
   localStorage = new LocalStorage('./scratch');
@@ -109,8 +68,11 @@ for (index = 0, len = numberOfEffects; index < len; ++index) {
   }
 }
 
-//All these vars relate to the Nanoleaf Smart Light device
-
+////////////////////////////////////////////////////////////
+//                                                        //
+//All these vars relate to the Nanoleaf Smart Light device//
+//                                                        //
+////////////////////////////////////////////////////////////
 
 // Create a slider to adjust Aurora's brightnes
 const BriSlider = {
@@ -202,7 +164,9 @@ neeoapi.discoverOneBrain()
     });
   })
   .then(() => {
-    console.log('# Running initialisation. Remain vigilant!');
+    console.log('Search for Nanoleaf using the NEEO app and add the device now to continue...');
+    console.log('The initialisation will not run until it detects you have added the device')
+    console.log('If you have already added the Aurora Smart Light device to NEEO, no action is required.')
   })
   .catch((err) => {
     console.log('Something went wrong')
