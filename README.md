@@ -7,16 +7,24 @@ There should be no need to update any values manually!
  1. Nanoleaf Smart Light
  2. Nanoleaf Aurora Effects
 
-# Instructions
+### Instructions
 
- Simply run the driver, The first time you run it you will be prompted to add the device to NEEO to continue device discovery and initialisation phase. Once the device has been added toNEEO you will then be automatically prompted to hold the power button down on the Aurora to pair and complete setup.
- You'll know it's paired when the Aurora flashes. When this happens, restart the driver and add the effects device to Neeo. This way the effects device will contain a custom lsit of your Aurora effects and animations. Any subsequent server restarts should then be much quicker as the disocvery phase will not have to run.
+1. Launch the driver
+2. Search for the **Aurora** device and add to NEEO
+3. Once the device has been added to NEEO the driver will begin to detect and pair with the Aurora.
+4. Press and hold the power button on the Aurora for 5-7 seconds when prompted to do so - you have 11 seconds before the first atempt to generate an API token begins which should be plenty of time.
+5. The Aurora will flash when it is paired correctly and ready to go
+6. Restart the driver to update the Effects device button lables to match your Aurora's effects and animations.
+7. Search for **Effects** and add the Effects device to NEEO
+8. Edit exisitng recipes and add shortcuts to the effects and power/brightness settings from the Auroa and Effects devices that you wish to control with NEEO
 
-You can use the Nanoleaf Smart Device without restarting the driver.
-The Aurora Effects device may work, but the names of the effects will not match your Aurora until the driver is restarted!
+ You can now contrlol birghtness, colour, power and all cutom effects drectly fromyour NEEO remote - if you're feeling frivolous you can even edit your Sonos recipe so that your NEEO automatically switches the Aurora to a Rhythm effect when yow activate it :)
+
+**Note. You can use the Nanoleaf Smart Device without restarting the driver but the effects device will contain incorrect name labels eg. *Dummy1***
 
 
-# Troubleshooting
+
+### Troubleshooting
           
   - Have you tried switching it off and on again?! ;)
   - If you have added the Aurora Effects Device and the labels start with #... restart the driver. The real effect labels are generated upon device initialisation. They are then saved to Storage to prevent constant discovery along with the API token and Aurora IP address,until they are retrieved they use default values such as "Dummy 1"
@@ -27,7 +35,7 @@ The Aurora Effects device may work, but the names of the effects will not match 
 
 - If there are no files in ./scratch try copying the dummy files from the ./scratch/examples folder. Edit the files with your IP and API key as per the example files.
 
-# Known Issues
+### Known Issues
 
 - The initial device discovery is a bit hit and miss at the moment, need to determine how to only
 build the effects device once effects have been detected really. The initialisation function is currently not being used correctly at all.
